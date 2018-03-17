@@ -1,0 +1,82 @@
+clc
+clear all
+
+% % % % %Sistemas de potencia:
+% % % % %Cálculos NRDR
+% % % % %Hecho por: Christian Andrés Ramírez Prieto
+
+v1=1.04;
+v2=1;
+v3=1.02;
+v4=1;
+
+c1=0;
+c2=0;
+c3=0;
+c4=0;
+
+pc2=-1;
+pc3=0.5;
+pc4=-0.3;
+qc2=-0.6;
+qc4=-0.1;
+
+y=[3-1i*9 -2+1i*6 -1+1i*3 0;-2+1i*6 3.666-1i*11 -0.666+1i*2 -1+1i*3;-1+1i*3 -0.666+1i*2 3.666-1i*11 -2+1i*6; 0 -1+1i*3 -2+1i*6 3-1i*9];
+
+b1=[-11 2 3; 2 -11 6; 3 6 -9];
+
+b2=[-11 3; 3 -9];
+
+dp_max1=1;
+dq_max=1;
+
+
+while dp_max1>0.001 || dq_max>0.001
+
+p2=v2*v1*abs(y(2,1))*cos(angle(y(2,1))-c2+c1)+v2*v2*abs(y(2,2))*cos(angle(y(2,2))-c2+c2)+v2*v3*abs(y(2,3))*cos(angle(y(2,3))-c2+c3)+v2*v4*abs(y(2,4))*cos(angle(y(2,4))-c2+c4)
+
+p3=v3*v1*abs(y(3,1))*cos(angle(y(3,1))-c3+c1)+v3*v2*abs(y(3,2))*cos(angle(y(3,2))-c3+c2)+v3*v3*abs(y(3,3))*cos(angle(y(3,3))-c3+c3)+v3*v4*abs(y(3,4))*cos(angle(y(3,4))-c3+c4)
+
+p4=v4*v1*abs(y(4,1))*cos(angle(y(4,1))-c4+c1)+v4*v2*abs(y(4,2))*cos(angle(y(4,2))-c4+c2)+v4*v3*abs(y(4,3))*cos(angle(y(4,3))-c4+c3)+v4*v4*abs(y(4,4))*cos(angle(y(4,4))-c4+c4)
+
+q2=-(v2*v1*abs(y(2,1))*sin(angle(y(2,1))-c2+c1)+v2*v2*abs(y(2,2))*sin(angle(y(2,2))-c2+c2)+v2*v3*abs(y(2,3))*sin(angle(y(2,3))-c2+c3)+v2*v4*abs(y(2,4))*sin(angle(y(2,4))-c2+c4))
+
+q4=-(v4*v1*abs(y(4,1))*sin(angle(y(4,1))-c4+c1)+v4*v2*abs(y(4,2))*sin(angle(y(4,2))-c4+c2)+v4*v3*abs(y(4,3))*sin(angle(y(4,3))-c4+c3)+v4*v4*abs(y(4,4))*sin(angle(y(4,4))-c4+c4))
+    
+
+
+dp=[pc2; pc3; pc4]-[p2;p3;p4]
+
+dq=[qc2;qc4]-[q2;q4]
+
+
+dp_max=max( abs(pc2-p2) , abs(pc4-p4)); 
+dp_max1=max( abs(dp_max) , abs(pc3-p3))
+
+dq_max=abs(max( abs(qc2-q2) ,abs(qc4-q4)))
+
+
+ds=-inv(b1)*[dp(1,1)/v2;dp(2,1)/v3;dp(3,1)/v4]
+dv=-inv(b2)*[dq(1,1)/v2;dq(2,1)/v4]
+
+cn=[c2;c3;c4]+ds
+vn=[v2;v4]+dv
+
+v2= vn(1,1);
+v4= vn(2,1);
+
+c2= cn(1,1);
+c3= cn(2,1);
+c4= cn(3,1);
+
+
+end
+
+v2_final= v2
+v4_final= v4
+
+c2_final= c2
+c3_final= c3
+c4_final= c4
+
+
